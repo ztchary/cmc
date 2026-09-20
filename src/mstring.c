@@ -4,8 +4,8 @@
 
 uint8_t *mstring_new() {
 	struct mstring *mstr = malloc(MSTRING_NEW_CAP + sizeof(struct mstring));
-	mstr.cap = MSTRING_NEW_CAP;
-	mstr.len = 0;
+	mstr->cap = MSTRING_NEW_CAP;
+	mstr->len = 0;
 	return mstr->data;
 }
 
@@ -14,7 +14,7 @@ size_t mstring_len(uint8_t *str) {
 	return mstr->len;
 }
 
-size_t mstring_end(uint8_t *str) {
+uint8_t *mstring_end(uint8_t *str) {
 	struct mstring *mstr = (struct mstring *)(str - 8);
 	return mstr->data + mstr->len;
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <sys/epoll.h>
 #include <time.h>
+#include <unistd.h>
 #include "crypto.h"
 #include "packet.h"
 #include "swrap.h"
@@ -9,20 +10,11 @@
 #define PORT 25565
 #define MAX_EVENTS 64
 
-RSA *rsa_private;
-uint8_t rsa_public;
-size_t rsa_public_len;
-
-#include <stdio.h>
-#include <inttypes.h>
-#include <time.h>
-
 int64_t get_time_us(void) {
 	struct timespec ts;
 	timespec_get(&ts, TIME_UTC);
 	return ((int64_t)ts.tv_sec) * 1000000 + ((int64_t)ts.tv_nsec) / 1000;
 }
-
 
 int main() {
 	int sock_fd = swrap_listen(PORT);
@@ -35,7 +27,7 @@ int main() {
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock_fd, &ev);
 
 	crypto_crc32c_init();
-	rsa_private = crypto_gen_keypair(rsa_public, rsa_public_len);
+	crypto_gen_keypair();
 
 	struct sockaddr_in c_addr = { 0 };
 	socklen_t socklen;
@@ -65,8 +57,11 @@ int main() {
 			}
 
 			struct client_data *client = (struct client_data *)ev.data.ptr;
-			if (client_handle_data(client) != 0) {
-				client_disconnect(client);
+			if (client_dec_net_in(client) != 0) {
+				client_free(client);
+			}
+			if (client_enc_net_out(client) != 0) {
+				client_free(client);
 			}
 		}
 

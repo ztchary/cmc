@@ -8,6 +8,10 @@
 
 uint32_t crypto_crc32c_table[256];
 
+EVP_PKEY *private_key;
+uint8_t *pub_key_der;
+size_t pub_key_len;
+
 void crypto_crc32c_init(void) {
     for (uint32_t i = 0; i < 256; i++) {
         uint32_t crc = i;
@@ -35,7 +39,7 @@ int crypto_gen_keypair() {
 	private_key = EVP_RSA_gen(1024);
 	if (!private_key) return -1;
 
-	pub_key_len = i2d_PUBKEY(pkey, &pub_key_der);
-	return (*pub_key_len > 0) - 1;
+	pub_key_len = i2d_PUBKEY(private_key, &pub_key_der);
+	return (pub_key_len > 0) - 1;
 }
 

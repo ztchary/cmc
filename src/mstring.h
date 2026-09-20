@@ -6,7 +6,7 @@ struct mstring {
 	size_t cap;
 	size_t len;
 	char data[];
-}
+};
 
 uint8_t *mstring_new();
 size_t mstring_len(uint8_t *);

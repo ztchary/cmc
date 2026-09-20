@@ -72,4 +72,3 @@ int swrap_recv(int fd, char *dest, size_t n, EVP_CIPHER_CTX *dec_ctx) {
 
 	return total;
 }
-

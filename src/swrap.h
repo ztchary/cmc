@@ -1,5 +1,7 @@
 #pragma once
 #include <stddef.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include "crypto.h"
 
 int swrap_listen(int);
